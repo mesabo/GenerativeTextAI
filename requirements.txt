@@ -1,0 +1,9 @@
+transformers
+accelerate
+datasets
+openpyxl
+datasets
+numpy
+pandas
+scikit-learn
+accelerate
