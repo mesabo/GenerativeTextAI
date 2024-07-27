@@ -11,10 +11,8 @@ Univ: Hosei University
 Dept: Science and Engineering
 Lab: Prof YU Keping's Lab
 """
-
 # quantize.py
 import torch
-
 
 def quantize_model(model):
     """
@@ -24,8 +22,11 @@ def quantize_model(model):
     Returns:
         quantized_model: The quantized model.
     """
+    # Ensure the quantization engine is set to qnnpack for macOS
+    torch.backends.quantized.engine = 'qnnpack'
+
     # Apply dynamic quantization (must be done on CPU)
-    model = model.to("cpu")
+    model.to('cpu')
     quantized_model = torch.quantization.quantize_dynamic(
         model, {torch.nn.Linear}, dtype=torch.qint8
     )

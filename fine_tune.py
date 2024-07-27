@@ -1,31 +1,19 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on 07/26/2024
-🚀 Welcome to the Awesome Python Script 🚀
-
-User: messou
-Email: mesabo18@gmail.com / messouaboya17@gmail.com
-Github: https://github.com/mesabo
-Univ: Hosei University
-Dept: Science and Engineering
-Lab: Prof YU Keping's Lab
-"""
-
 # fine_tune.py
-from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
-from datasets import load_dataset
 import pandas as pd
-from sklearn.model_selection import train_test_split
 import torch
+from datasets import load_dataset
+from sklearn.model_selection import train_test_split
+from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
 
-def fine_tune_model(model, tokenizer, dataset_name="Krooz/Campus_Recruitment_CSV"):
+
+def fine_tune_model(model, tokenizer, dataset_name="Krooz/Campus_Recruitment_CSV", epochs=3):
     """
     Fine-tunes the model using the provided dataset.
     Args:
         model: The pre-trained language model.
         tokenizer: The tokenizer for the model.
         dataset_name (str): The name of the dataset to load.
+        epochs (int): The number of training epochs.
     Returns:
         trainer: The trainer used for fine-tuning.
     """
@@ -34,7 +22,9 @@ def fine_tune_model(model, tokenizer, dataset_name="Krooz/Campus_Recruitment_CSV
     df = pd.DataFrame(dataset['train'])
 
     # Preprocess the dataset
-    texts = df.apply(lambda row: f"CGPA: {row['CGPA']}; Internships: {row['Internships']}; Projects: {row['Projects']}; Workshops/Certifications: {row['Workshops/Certifications']}; Aptitude Test Score: {row['AptitudeTestScore']}; Soft Skills Rating: {row['SoftSkillsRating']}; Extracurricular Activities: {row['ExtracurricularActivities']}; Placement Training: {row['PlacementTraining']}; SSC Marks: {row['SSC_Marks']}; HSC Marks: {row['HSC_Marks']}", axis=1).tolist()
+    texts = df.apply(lambda
+                         row: f"CGPA: {row['CGPA']}; Internships: {row['Internships']}; Projects: {row['Projects']}; Workshops/Certifications: {row['Workshops/Certifications']}; Aptitude Test Score: {row['AptitudeTestScore']}; Soft Skills Rating: {row['SoftSkillsRating']}; Extracurricular Activities: {row['ExtracurricularActivities']}; Placement Training: {row['PlacementTraining']}; SSC Marks: {row['SSC_Marks']}; HSC Marks: {row['HSC_Marks']}",
+                     axis=1).tolist()
     labels = df['PlacementStatus'].apply(lambda x: 1 if x == 'Placed' else 0).tolist()  # Convert labels to integers
 
     train_texts, val_texts, train_labels, val_labels = train_test_split(texts, labels, test_size=0.1)
@@ -60,13 +50,13 @@ def fine_tune_model(model, tokenizer, dataset_name="Krooz/Campus_Recruitment_CSV
 
     # Set up the trainer
     training_args = TrainingArguments(
-        output_dir='./output',          # output directory
-        num_train_epochs=1,              # total number of training epochs
-        per_device_train_batch_size=2,   # batch size for training
-        per_device_eval_batch_size=2,    # batch size for evaluation
-        warmup_steps=10,                 # number of warmup steps for learning rate scheduler
-        weight_decay=0.01,               # strength of weight decay
-        logging_dir='./logs',            # directory for storing logs
+        output_dir='./output',  # output directory
+        num_train_epochs=epochs,  # total number of training epochs
+        per_device_train_batch_size=2,  # batch size for training
+        per_device_eval_batch_size=2,  # batch size for evaluation
+        warmup_steps=10,  # number of warmup steps for learning rate scheduler
+        weight_decay=0.01,  # strength of weight decay
+        logging_dir='./logs',  # directory for storing logs
     )
 
     data_collator = DataCollatorForLanguageModeling(
@@ -75,10 +65,10 @@ def fine_tune_model(model, tokenizer, dataset_name="Krooz/Campus_Recruitment_CSV
     )
 
     trainer = Trainer(
-        model=model,                         # the instantiated 🤗 Transformers model to be trained
-        args=training_args,                  # training arguments, defined above
-        train_dataset=train_dataset,         # training dataset
-        eval_dataset=val_dataset,            # evaluation dataset
+        model=model,  # the instantiated 🤗 Transformers model to be trained
+        args=training_args,  # training arguments, defined above
+        train_dataset=train_dataset,  # training dataset
+        eval_dataset=val_dataset,  # evaluation dataset
         data_collator=data_collator,
     )
 
@@ -86,6 +76,7 @@ def fine_tune_model(model, tokenizer, dataset_name="Krooz/Campus_Recruitment_CSV
     trainer.train()
 
     return trainer
+
 
 def save_model(trainer, output_dir="./output"):
     """

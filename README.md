@@ -1,14 +1,21 @@
 # Project structure
 
-project_root/
-│
-├── main.py
+.
+├── README.md
+├── checkpoint
+├── data
 ├── fine_tune.py
-├── utils.py
 ├── gpt2_simple_utils.py
-├── data/ # Directory for datasets
-├── output/ # Directory for output models and CSV files
-└── logs/ # Directory for logs
+├── logs
+├── main.py
+├── model_cache
+├── models
+├── notebooks
+├── output
+├── quantize.py
+├── requirements.txt
+├── shakespeare.txt
+└── utils.py
 
 # Run the code
 
